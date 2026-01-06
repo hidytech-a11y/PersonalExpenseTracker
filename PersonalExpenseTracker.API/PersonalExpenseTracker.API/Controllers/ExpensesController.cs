@@ -17,17 +17,17 @@ namespace ExpenseTracker.Api.Controllers
 
         // GET: api/expenses
         [HttpGet]
-        public ActionResult<List<Expense>> GetAllExpenses()
+        public async Task<ActionResult<List<Expense>>> GetAllExpenses()
         {
-            var expenses = _expenseService.GetAllExpenses();
+            var expenses = await _expenseService.GetAllExpensesAsync();
             return Ok(expenses);
         }
 
         // GET: api/expenses/{id}
         [HttpGet("{id}")]
-        public ActionResult<Expense> GetExpenseById(Guid id)
+        public async Task<ActionResult<Expense>> GetExpenseById(Guid id)
         {
-            var expense = _expenseService.GetExpenseById(id);
+            var expense = await _expenseService.GetExpenseByIdAsync(id);
             if (expense == null)
             {
                 return NotFound(new { message = "Expense not found" });
@@ -37,26 +37,28 @@ namespace ExpenseTracker.Api.Controllers
 
         // GET: api/expenses/category/{category}
         [HttpGet("category/{category}")]
-        public ActionResult<List<Expense>> GetExpensesByCategory(string category)
+        public async Task<ActionResult<List<Expense>>> GetExpensesByCategory(string category)
         {
-            var expenses = _expenseService.GetExpensesByCategory(category);
+            var expenses = await _expenseService.GetExpensesByCategoryAsync(category);
             return Ok(expenses);
         }
 
         // GET: api/expenses/categories
         [HttpGet("categories")]
-        public ActionResult<List<string>> GetAllCategories()
+        public async Task<ActionResult<List<string>>> GetAllCategories()
         {
-            var categories = _expenseService.GetAllCategories();
+            var categories = await _expenseService.GetAllCategoriesAsync();
             return Ok(categories);
         }
 
         // GET: api/expenses/total
         [HttpGet("total")]
-        public ActionResult<object> GetTotalSpending()
+        public async Task<ActionResult<object>> GetTotalSpending()
         {
-            var total = _expenseService.GetTotalSpending();
-            var count = _expenseService.GetAllExpenses().Count;
+            var total = await _expenseService.GetTotalSpendingAsync();
+            var expenses = await _expenseService.GetAllExpensesAsync();
+            var count = expenses.Count;
+
             return Ok(new
             {
                 totalAmount = total,
@@ -67,7 +69,7 @@ namespace ExpenseTracker.Api.Controllers
 
         // POST: api/expenses
         [HttpPost]
-        public ActionResult<Expense> CreateExpense([FromBody] CreateExpenseDto dto)
+        public async Task<ActionResult<Expense>> CreateExpense([FromBody] CreateExpenseDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -81,29 +83,29 @@ namespace ExpenseTracker.Api.Controllers
                 Description = dto.Description
             };
 
-            _expenseService.AddExpense(expense);
+            await _expenseService.AddExpenseAsync(expense);
             return CreatedAtAction(nameof(GetExpenseById), new { id = expense.Id }, expense);
         }
 
         // PUT: api/expenses/{id}
         [HttpPut("{id}")]
-        public ActionResult UpdateExpense(Guid id, [FromBody] UpdateExpenseDto dto)
+        public async Task<ActionResult> UpdateExpense(Guid id, [FromBody] UpdateExpenseDto dto)
         {
-            var success = _expenseService.UpdateExpense(id, dto.Amount, dto.Category, dto.Description);
+            var success = await _expenseService.UpdateExpenseAsync(id, dto.Amount, dto.Category, dto.Description);
             if (!success)
             {
                 return NotFound(new { message = "Expense not found" });
             }
 
-            var updatedExpense = _expenseService.GetExpenseById(id);
+            var updatedExpense = await _expenseService.GetExpenseByIdAsync(id);
             return Ok(updatedExpense);
         }
 
         // DELETE: api/expenses/{id}
         [HttpDelete("{id}")]
-        public ActionResult DeleteExpense(Guid id)
+        public async Task<ActionResult> DeleteExpense(Guid id)
         {
-            var success = _expenseService.DeleteExpense(id);
+            var success = await _expenseService.DeleteExpenseAsync(id);
             if (!success)
             {
                 return NotFound(new { message = "Expense not found" });

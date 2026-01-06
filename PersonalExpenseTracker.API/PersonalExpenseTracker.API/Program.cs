@@ -1,23 +1,45 @@
+using ExpenseTracker.Api.Data;
 using ExpenseTracker.Api.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register our ExpenseService as a Singleton (one instance for the app lifetime)
-builder.Services.AddSingleton<IExpenseService, ExpenseService>();
+// CORS Configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+builder.Services.AddDbContext<ExpenseDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IExpenseService, ExpenseRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ExpenseDbContext>();
+    await db.Database.MigrateAsync();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// CORS must be before UseAuthorization!
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
