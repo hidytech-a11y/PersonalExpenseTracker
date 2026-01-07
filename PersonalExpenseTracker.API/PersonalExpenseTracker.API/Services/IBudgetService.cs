@@ -1,0 +1,15 @@
+﻿using ExpenseTracker.Api.Models;
+using ExpenseTracker.API.Models;
+
+namespace ExpenseTracker.Api.Services
+{
+    public interface IBudgetService
+    {
+        Task<List<Budget>> GetAllBudgetsAsync();
+        Task<Budget?> GetBudgetAsync(string category, int month, int year);
+        Task AddBudgetAsync(Budget budget);
+        Task<bool> UpdateBudgetAsync(Guid id, decimal monthlyLimit);
+        Task<bool> DeleteBudgetAsync(Guid id);
+        Task<decimal> GetSpentAmountAsync(string category, int month, int year);
+    }
+}

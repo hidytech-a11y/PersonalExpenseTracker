@@ -23,6 +23,7 @@ builder.Services.AddDbContext<ExpenseDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IExpenseService, ExpenseRepository>();
+builder.Services.AddScoped<IBudgetService, BudgetRepository>();
 
 var app = builder.Build();
 

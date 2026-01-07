@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Api.Models;
+using ExpenseTracker.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTracker.Api.Data
@@ -11,6 +12,7 @@ namespace ExpenseTracker.Api.Data
         }
 
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Budget> Budgets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +40,24 @@ namespace ExpenseTracker.Api.Data
                 // Add index for better query performance
                 entity.HasIndex(e => e.Category);
                 entity.HasIndex(e => e.Date);
+            });
+
+            // Configure Budget entity
+            modelBuilder.Entity<Budget>(entity =>
+            {
+                entity.HasKey(b => b.Id);
+
+                entity.Property(b => b.MonthlyLimit)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(b => b.Category)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                // Add index for better query performance
+                // Unique constraint: one budget per category per month
+                entity.HasIndex(b => new { b.Category, b.Month, b.Year })
+                    .IsUnique();
             });
 
             // Seed some initial data (optional)
