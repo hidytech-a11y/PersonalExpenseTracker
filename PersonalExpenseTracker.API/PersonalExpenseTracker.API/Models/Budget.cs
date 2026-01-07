@@ -14,13 +14,17 @@ namespace ExpenseTracker.API.Models
 
         [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than zero.")]
-
-        
-        public int Month { get; set; }  // 1-12
         public decimal MonthlyLimit { get; set; }
+
+
+        [Required]
+        public int Month { get; set; }  // 1-12
 
         [Required]
         public int Year { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
 
         public Budget()
         {

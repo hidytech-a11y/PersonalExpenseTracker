@@ -1,12 +1,15 @@
 ﻿using ExpenseTracker.Api.Models;
 using ExpenseTracker.Api.Services;
 using ExpenseTracker.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ExpenseTracker.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class BudgetsController : ControllerBase
     {
         private readonly IBudgetService _budgetService;
@@ -16,16 +19,24 @@ namespace ExpenseTracker.Api.Controllers
             _budgetService = budgetService;
         }
 
+        private Guid GetUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return Guid.Parse(userIdClaim!);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<BudgetStatus>>> GetAllBudgets()
         {
+            var userId = GetUserId();
             var budgets = await _budgetService.GetAllBudgetsAsync();
+            var userBudgets = budgets.Where(b => b.UserId == userId).ToList();
             var result = new List<BudgetStatus>();
 
-            foreach (var budget in budgets)
+            foreach (var budget in userBudgets)
             {
                 var spent = await _budgetService.GetSpentAmountAsync(
-                    budget.Category, budget.Month, budget.Year);
+                    budget.Category, budget.Month, budget.Year, userId);
 
                 result.Add(new BudgetStatus
                 {
@@ -48,8 +59,9 @@ namespace ExpenseTracker.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateBudget([FromBody] CreateBudgetDto dto)
         {
+            var userId = GetUserId();
             var existing = await _budgetService.GetBudgetAsync(
-                dto.Category, dto.Month, dto.Year);
+                dto.Category, dto.Month, dto.Year, userId);
 
             if (existing != null)
             {
@@ -61,7 +73,8 @@ namespace ExpenseTracker.Api.Controllers
                 Category = dto.Category,
                 MonthlyLimit = dto.MonthlyLimit,
                 Month = dto.Month,
-                Year = dto.Year
+                Year = dto.Year,
+                UserId = userId
             };
 
             await _budgetService.AddBudgetAsync(budget);
@@ -71,6 +84,14 @@ namespace ExpenseTracker.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateBudget(Guid id, [FromBody] UpdateBudgetDto dto)
         {
+            var userId = GetUserId();
+            var budget = await _budgetService.GetBudgetByIdAsync(id);
+
+            if (budget == null || budget.UserId != userId)
+            {
+                return NotFound(new { message = "Budget not found" });
+            }
+
             var success = await _budgetService.UpdateBudgetAsync(id, dto.MonthlyLimit);
             if (!success)
             {
@@ -82,6 +103,14 @@ namespace ExpenseTracker.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBudget(Guid id)
         {
+            var userId = GetUserId();
+            var budget = await _budgetService.GetBudgetByIdAsync(id);
+
+            if (budget == null || budget.UserId != userId)
+            {
+                return NotFound(new { message = "Budget not found" });
+            }
+
             var success = await _budgetService.DeleteBudgetAsync(id);
             if (!success)
             {

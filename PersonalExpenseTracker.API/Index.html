@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Track your expenses and budgets with ease">
     <title>💰 Expense Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -19,6 +21,48 @@
             padding: 20px;
         }
 
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .auth-header h1 {
+                color: #667eea;
+                font-size: 2em;
+                margin-bottom: 10px;
+            }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+            .auth-tab.active {
+                background: #667eea;
+                color: white;
+            }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -26,18 +70,51 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
+            display: none;
         }
+
+            .container.active {
+                display: block;
+            }
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 30px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-            .header h1 {
-                font-size: 2.5em;
-                margin-bottom: 10px;
+        .header-left h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .user-name {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+            .logout-btn:hover {
+                background: white;
+                color: #667eea;
             }
 
         .stats {
@@ -67,6 +144,47 @@
                 font-weight: bold;
                 color: #667eea;
             }
+
+        .recurring-section {
+            padding: 30px;
+            background: #fff3cd;
+            border-top: 1px solid #ffc107;
+        }
+
+            .recurring-section h2 {
+                color: #856404;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+        .recurring-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .recurring-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #ffc107;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .recurring-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .recurring-amount {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #856404;
+            margin-right: 15px;
+        }
 
         .budgets-section {
             padding: 30px;
@@ -117,19 +235,11 @@
             font-size: 0.8em;
         }
 
-            .budget-delete:hover {
-                background: #c82333;
-            }
-
         .budget-amounts {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
             font-size: 0.9em;
-        }
-
-        .budget-limit {
-            color: #666;
         }
 
         .budget-spent {
@@ -264,27 +374,20 @@
             color: white;
         }
 
-            .btn-secondary:hover {
-                background: #5a6268;
-            }
-
         .btn-success {
             background: #28a745;
             color: white;
         }
 
-            .btn-success:hover {
-                background: #218838;
-            }
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
 
         .btn-info {
             background: #17a2b8;
             color: white;
         }
-
-            .btn-info:hover {
-                background: #138496;
-            }
 
         .btn-danger {
             background: #dc3545;
@@ -293,10 +396,6 @@
             font-size: 0.9em;
         }
 
-            .btn-danger:hover {
-                background: #c82333;
-            }
-
         .btn-edit {
             background: #ffc107;
             color: #000;
@@ -304,10 +403,6 @@
             font-size: 0.9em;
             margin-right: 5px;
         }
-
-            .btn-edit:hover {
-                background: #e0a800;
-            }
 
         select {
             padding: 12px;
@@ -396,6 +491,7 @@
         .expense-actions {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .modal {
@@ -465,6 +561,24 @@
             margin-top: 25px;
         }
 
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
         .loading {
             text-align: center;
             padding: 40px;
@@ -489,12 +603,14 @@
                 text-align: center;
             }
 
-            .expense-actions {
-                justify-content: center;
+            .header {
+                flex-direction: column;
+                text-align: center;
             }
 
-            .stats {
-                grid-template-columns: 1fr;
+            .header-right {
+                text-align: center;
+                margin-top: 15px;
             }
 
             .charts-grid {
@@ -508,10 +624,63 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Auth Container -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-header">
+            <h1>💰 Expense Tracker</h1>
+            <p>Manage your finances with ease</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Login</button>
+            <button class="auth-tab" id="registerTab" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <div id="authError" class="error-message" style="display: none;"></div>
+        <div id="authSuccess" class="success-message" style="display: none;"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="registerName" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="registerEmail" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="registerPassword" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+        </form>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="container" id="mainContainer">
         <div class="header">
-            <h1>Expense Tracker</h1>
-            <p>Manage your expenses and budgets with ease</p>
+            <div class="header-left">
+                <h1>💰 Expense Tracker</h1>
+                <p>Manage your expenses and budgets</p>
+            </div>
+            <div class="header-right">
+                <div class="user-name" id="userName">Welcome!</div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
         </div>
 
         <div class="stats" id="stats">
@@ -526,6 +695,18 @@
             <div class="stat-card">
                 <h3>Average Expense</h3>
                 <div class="value" id="avgAmount">₦0.00</div>
+            </div>
+        </div>
+
+        <!-- Recurring Expenses Section -->
+        <div class="recurring-section">
+            <h2>🔄 Recurring Expenses</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="btn btn-warning" onclick="openRecurringModal()">➕ Add Recurring</button>
+                <button class="btn btn-info" onclick="processRecurring()">⚡ Process Now</button>
+            </div>
+            <div class="recurring-list" id="recurringList">
+                <div class="loading">Loading recurring expenses...</div>
             </div>
         </div>
 
@@ -572,7 +753,7 @@
         </div>
     </div>
 
-    <!-- Add/Edit Expense Modal -->
+    <!-- Expense Modal -->
     <div class="modal" id="expenseModal">
         <div class="modal-content">
             <div class="modal-header" id="modalTitle">Add New Expense</div>
@@ -654,58 +835,302 @@
         </div>
     </div>
 
+    <!-- Recurring Expense Modal -->
+    <div class="modal" id="recurringModal">
+        <div class="modal-content">
+            <div class="modal-header">Add Recurring Expense</div>
+            <form id="recurringForm" onsubmit="saveRecurring(event)">
+                <div class="form-group">
+                    <label>Amount (₦)</label>
+                    <input type="number" id="recurringAmount" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="recurringCategory" required>
+                        <option value="">Select category</option>
+                        <option value="Food">🍔 Food</option>
+                        <option value="Transport">🚗 Transport</option>
+                        <option value="Entertainment">🎬 Entertainment</option>
+                        <option value="Bills">📄 Bills</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="recurringDescription" required>
+                </div>
+                <div class="form-group">
+                    <label>Day of Month (1-31)</label>
+                    <input type="number" id="recurringDay" min="1" max="31" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('recurringModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        const API_URL = 'http://localhost:5259/api/expenses';
-        const BUDGET_API_URL = 'http://localhost:5259/api/budgets';
+        const API_BASE = 'http://localhost:5259/api';
+        let token = localStorage.getItem('token');
+        let currentUser = null;
         let allExpenses = [];
         let allBudgets = [];
         let categoryChart = null;
         let topExpensesChart = null;
 
         document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+
+        function checkAuth() {
+            if (token) {
+                fetchUserData();
+            } else {
+                showAuth();
+            }
+        }
+
+        async function fetchUserData() {
+            try {
+                const response = await apiCall('/expenses');
+                if (response.ok) {
+                    showApp();
+                    loadAll();
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                logout();
+            }
+        }
+
+        function showAuth() {
+            document.getElementById('authContainer').style.display = 'block';
+            document.getElementById('mainContainer').classList.remove('active');
+        }
+
+        function showApp() {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('mainContainer').classList.add('active');
+
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            if (userData.name) {
+                document.getElementById('userName').textContent = `Welcome, ${userData.name}!`;
+            }
+        }
+
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+
+            hideMessages();
+
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                loginTab.classList.remove('active');
+                registerTab.classList.add('active');
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            hideMessages();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    showSuccess('Login successful!');
+                    setTimeout(() => {
+                        showApp();
+                        loadAll();
+                    }, 1000);
+                } else {
+                    showError(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Network error. Please try again.');
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            hideMessages();
+
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    showSuccess('Registration successful!');
+                    setTimeout(() => {
+                        showApp();
+                        loadAll();
+                    }, 1000);
+                } else {
+                    showError(data.message || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                showError('Network error. Please try again.');
+            }
+        }
+
+        function logout() {
+            token = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            allExpenses = [];
+            allBudgets = [];
+            showAuth();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('authError');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('authSuccess');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+        }
+
+        function hideMessages() {
+            document.getElementById('authError').style.display = 'none';
+            document.getElementById('authSuccess').style.display = 'none';
+        }
+
+        async function apiCall(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            return fetch(`${API_BASE}${endpoint}`, {
+                ...options,
+                headers
+            });
+        }
+
+        function loadAll() {
             const now = new Date();
             document.getElementById('budgetMonth').value = now.getMonth() + 1;
             document.getElementById('budgetYear').value = now.getFullYear();
-            loadAll();
-        });
-
-        function loadAll() {
             loadExpenses();
             loadCategories();
             loadStats();
             loadBudgets();
+            loadRecurring();
         }
 
         async function loadExpenses() {
             try {
-                const response = await fetch(API_URL);
+                const response = await apiCall('/expenses');
+                if (!response.ok) throw new Error('Failed to load expenses');
                 allExpenses = await response.json();
                 displayExpenses(allExpenses);
                 updateCharts();
             } catch (error) {
                 console.error('Error loading expenses:', error);
                 document.getElementById('expensesList').innerHTML =
-                    '<div class="empty-state"><h3>⚠️ Error loading expenses</h3><p>Make sure your API is running!</p></div>';
+                    '<div class="empty-state"><h3>⚠️ Error loading expenses</h3><p>Please refresh the page</p></div>';
             }
         }
 
         async function loadBudgets() {
             try {
-                const response = await fetch(BUDGET_API_URL);
+                const response = await apiCall('/budgets');
+                if (!response.ok) throw new Error('Failed to load budgets');
                 allBudgets = await response.json();
                 displayBudgets(allBudgets);
             } catch (error) {
                 console.error('Error loading budgets:', error);
                 document.getElementById('budgetsGrid').innerHTML =
-                    '<div class="empty-state"><p>No budgets set. Click "Set Budget" to get started!</p></div>';
+                    '<div class="empty-state"><p>Error loading budgets</p></div>';
             }
+        }
+
+        async function loadRecurring() {
+            try {
+                const response = await apiCall('/recurringexpenses');
+                if (!response.ok) throw new Error('Failed to load recurring');
+                const recurring = await response.json();
+                displayRecurring(recurring);
+            } catch (error) {
+                console.error('Error loading recurring expenses:', error);
+                document.getElementById('recurringList').innerHTML =
+                    '<div class="empty-state"><p>Error loading recurring expenses</p></div>';
+            }
+        }
+
+        function displayRecurring(recurring) {
+            const container = document.getElementById('recurringList');
+
+            if (recurring.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No recurring expenses set.</p></div>';
+                return;
+            }
+
+            container.innerHTML = recurring.map(r => `
+                    <div class="recurring-item">
+                        <div class="recurring-info">
+                            <strong>${r.description}</strong>
+                            <div style="font-size: 0.9em; color: #666;">
+                                ${r.category} • Day ${r.dayOfMonth} • ${r.frequency}
+                            </div>
+                        </div>
+                        <div class="recurring-amount">₦${r.amount.toFixed(2)}</div>
+                        <button class="btn btn-danger" onclick="deleteRecurring('${r.id}')">🗑️</button>
+                    </div>
+                `).join('');
         }
 
         function displayBudgets(budgets) {
             const container = document.getElementById('budgetsGrid');
 
             if (budgets.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p>📊 No budgets set for this month. Click "Set Budget" to start tracking!</p></div>';
+                container.innerHTML = '<div class="empty-state"><p>No budgets set for this month.</p></div>';
                 return;
             }
 
@@ -723,7 +1148,7 @@
                                 <button class="budget-delete" onclick="deleteBudget('${budget.id}')">🗑️</button>
                             </div>
                             <div class="budget-amounts">
-                                <span class="budget-limit">Limit: ₦${budget.monthlyLimit.toFixed(2)}</span>
+                                <span>Limit: ₦${budget.monthlyLimit.toFixed(2)}</span>
                                 <span class="budget-spent ${status}">Spent: ₦${budget.spent.toFixed(2)}</span>
                             </div>
                             <div class="progress-bar">
@@ -763,7 +1188,8 @@
 
         async function loadStats() {
             try {
-                const response = await fetch(`${API_URL}/total`);
+                const response = await apiCall('/expenses/total');
+                if (!response.ok) throw new Error('Failed to load stats');
                 const stats = await response.json();
 
                 document.getElementById('totalCount').textContent = stats.expenseCount;
@@ -776,7 +1202,8 @@
 
         async function loadCategories() {
             try {
-                const response = await fetch(`${API_URL}/categories`);
+                const response = await apiCall('/expenses/categories');
+                if (!response.ok) throw new Error('Failed to load categories');
                 const categories = await response.json();
 
                 const select = document.getElementById('categoryFilter');
@@ -796,12 +1223,13 @@
             const category = document.getElementById('categoryFilter').value;
 
             if (!category) {
-                loadExpenses();
+                displayExpenses(allExpenses);
                 return;
             }
 
             try {
-                const response = await fetch(`${API_URL}/category/${category}`);
+                const response = await apiCall(`/expenses/category/${category}`);
+                if (!response.ok) throw new Error('Failed to filter');
                 const expenses = await response.json();
                 displayExpenses(expenses);
             } catch (error) {
@@ -827,6 +1255,8 @@
             if (categoryChart) categoryChart.destroy();
 
             const ctx = document.getElementById('categoryChart');
+            if (labels.length === 0) return;
+
             categoryChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
@@ -863,6 +1293,8 @@
             if (topExpensesChart) topExpensesChart.destroy();
 
             const ctx = document.getElementById('topExpensesChart');
+            if (sorted.length === 0) return;
+
             topExpensesChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -936,6 +1368,11 @@
             document.getElementById('budgetModal').classList.add('active');
         }
 
+        function openRecurringModal() {
+            document.getElementById('recurringForm').reset();
+            document.getElementById('recurringModal').classList.add('active');
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
@@ -952,15 +1389,13 @@
 
             try {
                 if (id) {
-                    await fetch(`${API_URL}/${id}`, {
+                    await apiCall(`/expenses/${id}`, {
                         method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(expenseData)
                     });
                 } else {
-                    await fetch(API_URL, {
+                    await apiCall('/expenses', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(expenseData)
                     });
                 }
@@ -984,9 +1419,8 @@
             const budgetData = { category, monthlyLimit, month, year };
 
             try {
-                const response = await fetch(BUDGET_API_URL, {
+                const response = await apiCall('/budgets', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(budgetData)
                 });
 
@@ -1004,9 +1438,34 @@
             }
         }
 
+        async function saveRecurring(event) {
+            event.preventDefault();
+
+            const amount = parseFloat(document.getElementById('recurringAmount').value);
+            const category = document.getElementById('recurringCategory').value;
+            const description = document.getElementById('recurringDescription').value;
+            const dayOfMonth = parseInt(document.getElementById('recurringDay').value);
+
+            const recurringData = { amount, category, description, frequency: 'Monthly', dayOfMonth };
+
+            try {
+                await apiCall('/recurringexpenses', {
+                    method: 'POST',
+                    body: JSON.stringify(recurringData)
+                });
+
+                closeModal('recurringModal');
+                loadRecurring();
+            } catch (error) {
+                console.error('Error saving recurring expense:', error);
+                alert('Error saving recurring expense!');
+            }
+        }
+
         async function editExpense(id) {
             try {
-                const response = await fetch(`${API_URL}/${id}`);
+                const response = await apiCall(`/expenses/${id}`);
+                if (!response.ok) throw new Error('Failed to load expense');
                 const expense = await response.json();
 
                 document.getElementById('modalTitle').textContent = 'Edit Expense';
@@ -1018,16 +1477,15 @@
                 document.getElementById('expenseModal').classList.add('active');
             } catch (error) {
                 console.error('Error loading expense:', error);
+                alert('Error loading expense!');
             }
         }
 
         async function deleteExpense(id) {
-            if (!confirm('Are you sure you want to delete this expense?')) {
-                return;
-            }
+            if (!confirm('Are you sure you want to delete this expense?')) return;
 
             try {
-                await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                await apiCall(`/expenses/${id}`, { method: 'DELETE' });
                 loadAll();
             } catch (error) {
                 console.error('Error deleting expense:', error);
@@ -1036,12 +1494,10 @@
         }
 
         async function deleteBudget(id) {
-            if (!confirm('Are you sure you want to delete this budget?')) {
-                return;
-            }
+            if (!confirm('Are you sure you want to delete this budget?')) return;
 
             try {
-                await fetch(`${BUDGET_API_URL}/${id}`, { method: 'DELETE' });
+                await apiCall(`/budgets/${id}`, { method: 'DELETE' });
                 loadBudgets();
             } catch (error) {
                 console.error('Error deleting budget:', error);
@@ -1049,16 +1505,37 @@
             }
         }
 
-        document.getElementById('expenseModal').addEventListener('click', (e) => {
-            if (e.target.id === 'expenseModal') {
-                closeModal('expenseModal');
-            }
-        });
+        async function deleteRecurring(id) {
+            if (!confirm('Are you sure you want to delete this recurring expense?')) return;
 
-        document.getElementById('budgetModal').addEventListener('click', (e) => {
-            if (e.target.id === 'budgetModal') {
-                closeModal('budgetModal');
+            try {
+                await apiCall(`/recurringexpenses/${id}`, { method: 'DELETE' });
+                loadRecurring();
+            } catch (error) {
+                console.error('Error deleting recurring expense:', error);
+                alert('Error deleting recurring expense!');
             }
+        }
+
+        async function processRecurring() {
+            if (!confirm('This will create expenses for all active recurring items. Continue?')) return;
+
+            try {
+                await apiCall('/recurringexpenses/process', { method: 'POST' });
+                alert('Recurring expenses processed!');
+                loadAll();
+            } catch (error) {
+                console.error('Error processing recurring expenses:', error);
+                alert('Error processing recurring expenses!');
+            }
+        }
+
+        ['expenseModal', 'budgetModal', 'recurringModal'].forEach(modalId => {
+            document.getElementById(modalId).addEventListener('click', (e) => {
+                if (e.target.id === modalId) {
+                    closeModal(modalId);
+                }
+            });
         });
     </script>
 </body>

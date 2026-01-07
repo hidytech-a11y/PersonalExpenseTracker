@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/ExpenseTracker.Web/">
     <File Path="index.html" />
+    <File Path="manifest.json" />
   </Folder>
   <Project Path="PersonalExpenseTracker.API/ExpenseTracker.API.csproj" />
 </Solution>

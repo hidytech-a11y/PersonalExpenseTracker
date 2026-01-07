@@ -24,13 +24,19 @@ namespace ExpenseTracker.Api.Services
                 .ToListAsync();
         }
 
-        public async Task<Budget?> GetBudgetAsync(string category, int month, int year)
+        public async Task<Budget?> GetBudgetAsync(string category, int month, int year, Guid userId)
         {
             return await _context.Budgets
                 .FirstOrDefaultAsync(b =>
                     b.Category == category &&
                     b.Month == month &&
-                    b.Year == year);
+                    b.Year == year &&
+                    b.UserId == userId);
+        }
+
+        public async Task<Budget?> GetBudgetByIdAsync(Guid id)
+        {
+            return await _context.Budgets.FindAsync(id);
         }
 
         public async Task AddBudgetAsync(Budget budget)
@@ -61,7 +67,7 @@ namespace ExpenseTracker.Api.Services
             return true;
         }
 
-        public async Task<decimal> GetSpentAmountAsync(string category, int month, int year)
+        public async Task<decimal> GetSpentAmountAsync(string category, int month, int year, Guid userId)
         {
             var startDate = new DateTime(year, month, 1);
             var endDate = startDate.AddMonths(1);
@@ -70,7 +76,8 @@ namespace ExpenseTracker.Api.Services
                 .Where(e =>
                     e.Category == category &&
                     e.Date >= startDate &&
-                    e.Date < endDate)
+                    e.Date < endDate &&
+                    e.UserId == userId)
                 .SumAsync(e => (decimal?)e.Amount) ?? 0;
         }
     }
