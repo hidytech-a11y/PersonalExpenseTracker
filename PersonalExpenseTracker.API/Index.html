@@ -19,6 +19,270 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+            body.dark-mode {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+
+                body.dark-mode .container,
+                body.dark-mode .auth-container {
+                    background: #1e1e1e;
+                    color: #e0e0e0;
+                }
+
+                body.dark-mode .stat-card,
+                body.dark-mode .budget-card,
+                body.dark-mode .chart-card,
+                body.dark-mode .expense-item,
+                body.dark-mode .recurring-item {
+                    background: #2d2d2d;
+                    color: #e0e0e0;
+                    border-color: #404040;
+                }
+
+                body.dark-mode .stats,
+                body.dark-mode .budgets-section,
+                body.dark-mode .charts-section,
+                body.dark-mode .controls,
+                body.dark-mode .expenses-list {
+                    background: #252525;
+                }
+
+                body.dark-mode .recurring-section {
+                    background: #3d3520;
+                    border-top-color: #5a4f2e;
+                }
+
+                    body.dark-mode .recurring-section h2 {
+                        color: #ffd966;
+                    }
+
+                body.dark-mode .date-filters {
+                    background: #1e3a5f;
+                    border-top-color: #2c5282;
+                }
+
+                    body.dark-mode .date-filters h3,
+                    body.dark-mode .date-filter-group label {
+                        color: #93c5fd;
+                    }
+
+                body.dark-mode .stat-card h3,
+                body.dark-mode .expense-description,
+                body.dark-mode .expense-date {
+                    color: #b0b0b0;
+                }
+
+                body.dark-mode .budget-category,
+                body.dark-mode .modal-header {
+                    color: #93c5fd;
+                }
+
+                body.dark-mode .form-group label {
+                    color: #e0e0e0;
+                }
+
+                body.dark-mode .form-group input,
+                body.dark-mode .form-group select,
+                body.dark-mode select {
+                    background: #2d2d2d;
+                    color: #e0e0e0;
+                    border-color: #404040;
+                }
+
+                body.dark-mode .modal-content {
+                    background: #1e1e1e;
+                    color: #e0e0e0;
+                }
+
+                body.dark-mode .auth-header h1 {
+                    color: #93c5fd;
+                }
+
+                body.dark-mode .auth-tab {
+                    background: #2d2d2d;
+                    color: #e0e0e0;
+                }
+
+                    body.dark-mode .auth-tab.active {
+                        background: #667eea;
+                        color: white;
+                    }
+
+                body.dark-mode .empty-state {
+                    color: #b0b0b0;
+                }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+            .theme-toggle:hover {
+                transform: scale(1.1) rotate(20deg);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            }
+
+        body.dark-mode .theme-toggle {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        }
+
+        .analytics-section {
+            padding: 30px;
+            background: #f0f8ff;
+            border-top: 1px solid #b3d9ff;
+        }
+
+        body.dark-mode .analytics-section {
+            background: #1a2332;
+            border-top-color: #2d3748;
+        }
+
+        .analytics-section h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        body.dark-mode .analytics-section h2 {
+            color: #93c5fd;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode .analytics-card {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+
+        .analytics-card h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        body.dark-mode .analytics-card h3 {
+            color: #93c5fd;
+        }
+
+        .insight-box {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        body.dark-mode .insight-box {
+            background: #1e3a5f;
+            border-left-color: #93c5fd;
+        }
+
+        .insight-box h4 {
+            color: #004085;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        body.dark-mode .insight-box h4 {
+            color: #93c5fd;
+        }
+
+        .insight-box p {
+            color: #004085;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        body.dark-mode .insight-box p {
+            color: #e0e0e0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+        body.dark-mode .comparison-table th,
+        body.dark-mode .comparison-table td {
+            border-bottom-color: #404040;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        body.dark-mode .comparison-table th {
+            background: #4a5568;
+        }
+
+        .trend-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .trend-up {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .trend-down {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .trend-stable {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .auth-container {
@@ -347,6 +611,68 @@
             background: #f8f9fa;
             border-top: 1px solid #dee2e6;
         }
+
+        .date-filters {
+            padding: 20px 30px;
+            background: #e7f3ff;
+            border-top: 1px solid #b3d9ff;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+            .date-filters h3 {
+                color: #004085;
+                margin: 0;
+                margin-right: 15px;
+            }
+
+        .date-filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+            .date-filter-group label {
+                font-weight: 600;
+                color: #004085;
+            }
+
+            .date-filter-group input[type="date"] {
+                padding: 8px 12px;
+                border: 2px solid #b3d9ff;
+                border-radius: 8px;
+                font-size: 0.9em;
+            }
+
+        .quick-date-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-date {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+            .btn-date:hover {
+                background: #0056b3;
+                transform: translateY(-1px);
+            }
+
+            .btn-date.active {
+                background: #0056b3;
+                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+            }
 
         .btn {
             padding: 12px 24px;
@@ -721,6 +1047,68 @@
             </div>
         </div>
 
+        <!-- Advanced Analytics Section -->
+        <div class="analytics-section">
+            <h2>📊 Advanced Analytics & Insights</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="btn btn-info" onclick="loadAnalytics()">🔄 Refresh Analytics</button>
+            </div>
+
+            <div class="analytics-grid">
+                <!-- Monthly Trend Chart -->
+                <div class="analytics-card">
+                    <h3>📈 Monthly Spending Trend</h3>
+                    <div class="chart-container">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Category Comparison Over Time -->
+                <div class="analytics-card">
+                    <h3>📊 Category Trends (Last 6 Months)</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <!-- Key Insights -->
+                <div class="analytics-card">
+                    <h3>💡 Key Insights</h3>
+                    <div id="keyInsights">
+                        <div class="loading">Calculating insights...</div>
+                    </div>
+                </div>
+
+                <!-- Spending Patterns -->
+                <div class="analytics-card">
+                    <h3>📅 Spending Patterns</h3>
+                    <div id="spendingPatterns">
+                        <div class="loading">Analyzing patterns...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <!-- Month Comparison Table -->
+                <div class="analytics-card">
+                    <h3>📋 Monthly Comparison</h3>
+                    <div id="monthlyComparison">
+                        <div class="loading">Loading comparison...</div>
+                    </div>
+                </div>
+
+                <!-- Predictions -->
+                <div class="analytics-card">
+                    <h3>🔮 Spending Forecast</h3>
+                    <div id="spendingForecast">
+                        <div class="loading">Calculating forecast...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Charts Section -->
         <div class="charts-section">
             <div class="charts-grid">
@@ -737,6 +1125,32 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Date Range Filter Section -->
+        <div class="date-filters">
+            <h3>📅 Filter by Date</h3>
+
+            <div class="quick-date-buttons">
+                <button class="btn-date" onclick="filterQuickDate('today')">Today</button>
+                <button class="btn-date" onclick="filterQuickDate('week')">Last 7 Days</button>
+                <button class="btn-date" onclick="filterQuickDate('month')">This Month</button>
+                <button class="btn-date" onclick="filterQuickDate('lastmonth')">Last Month</button>
+                <button class="btn-date" onclick="filterQuickDate('year')">This Year</button>
+                <button class="btn-date" onclick="filterQuickDate('all')">All Time</button>
+            </div>
+
+            <div class="date-filter-group">
+                <label>From:</label>
+                <input type="date" id="startDate" onchange="filterByCustomDate()">
+            </div>
+
+            <div class="date-filter-group">
+                <label>To:</label>
+                <input type="date" id="endDate" onchange="filterByCustomDate()">
+            </div>
+
+            <button class="btn btn-secondary" onclick="clearDateFilter()">Clear Filter</button>
         </div>
 
         <div class="controls">
@@ -871,6 +1285,11 @@
         </div>
     </div>
 
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <span id="themeIcon">🌙</span>
+    </button>
+
     <script>
         const API_BASE = 'http://localhost:5259/api';
         let token = localStorage.getItem('token');
@@ -879,10 +1298,393 @@
         let allBudgets = [];
         let categoryChart = null;
         let topExpensesChart = null;
+        let monthlyTrendChart = null;
+        let categoryTrendChart = null;
+        let currentDateFilter = 'all';
+
+        // Advanced Analytics Functions - DEFINE THESE FIRST!
+        function loadAnalytics() {
+            console.log('loadAnalytics called, expenses count:', allExpenses ? allExpenses.length : 0);
+
+            if (!allExpenses || allExpenses.length === 0) {
+                console.log('No expenses to analyze yet');
+
+                // Show empty state messages
+                document.getElementById('keyInsights').innerHTML = '<div class="empty-state"><p>Add some expenses to see insights!</p></div>';
+                document.getElementById('spendingPatterns').innerHTML = '<div class="empty-state"><p>Add some expenses to see patterns!</p></div>';
+                document.getElementById('monthlyComparison').innerHTML = '<div class="empty-state"><p>Add some expenses to see comparison!</p></div>';
+                document.getElementById('spendingForecast').innerHTML = '<div class="empty-state"><p>Add some expenses to see forecast!</p></div>';
+                return;
+            }
+
+            try {
+                console.log('Generating analytics...');
+                generateMonthlyTrendChart();
+                generateCategoryTrendChart();
+                generateKeyInsights();
+                generateSpendingPatterns();
+                generateMonthlyComparison();
+                generateForecast();
+                console.log('Analytics generation complete!');
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                alert('Error loading analytics: ' + error.message);
+            }
+        }
+
+        function generateMonthlyTrendChart() {
+            const monthlyData = {};
+            const now = new Date();
+
+            for (let i = 11; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                monthlyData[key] = 0;
+            }
+
+            allExpenses.forEach(expense => {
+                const date = new Date(expense.date);
+                const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                if (monthlyData.hasOwnProperty(key)) {
+                    monthlyData[key] += expense.amount;
+                }
+            });
+
+            const labels = Object.keys(monthlyData).map(key => {
+                const [year, month] = key.split('-');
+                return new Date(year, month - 1).toLocaleDateString('default', { month: 'short', year: 'numeric' });
+            });
+            const data = Object.values(monthlyData);
+
+            if (monthlyTrendChart) monthlyTrendChart.destroy();
+
+            const ctx = document.getElementById('monthlyTrendChart');
+            monthlyTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Monthly Spending (₦)',
+                        data: data,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#667eea',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return 'Spent: ₦' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '₦' + value.toFixed(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateCategoryTrendChart() {
+            const now = new Date();
+            const categories = [...new Set(allExpenses.map(e => e.category))];
+            const months = [];
+
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                months.push({
+                    key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
+                    label: date.toLocaleDateString('default', { month: 'short' })
+                });
+            }
+
+            const datasets = categories.map((category, index) => {
+                const colors = ['#4CAF50', '#2196F3', '#FF9800', '#F44336', '#9C27B0'];
+                const data = months.map(month => {
+                    return allExpenses
+                        .filter(e => {
+                            const date = new Date(e.date);
+                            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                            return key === month.key && e.category === category;
+                        })
+                        .reduce((sum, e) => sum + e.amount, 0);
+                });
+
+                return {
+                    label: category,
+                    data: data,
+                    borderColor: colors[index % colors.length],
+                    backgroundColor: colors[index % colors.length],
+                    tension: 0.4
+                };
+            });
+
+            if (categoryTrendChart) categoryTrendChart.destroy();
+
+            const ctx = document.getElementById('categoryTrendChart');
+            categoryTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months.map(m => m.label),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '₦' + value.toFixed(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateKeyInsights() {
+            const now = new Date();
+            const thisMonth = allExpenses.filter(e => {
+                const date = new Date(e.date);
+                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+            });
+
+            const lastMonth = allExpenses.filter(e => {
+                const date = new Date(e.date);
+                const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                return date.getMonth() === lastMonthDate.getMonth() && date.getFullYear() === lastMonthDate.getFullYear();
+            });
+
+            const thisMonthTotal = thisMonth.reduce((sum, e) => sum + e.amount, 0);
+            const lastMonthTotal = lastMonth.reduce((sum, e) => sum + e.amount, 0);
+            const change = lastMonthTotal > 0 ? ((thisMonthTotal - lastMonthTotal) / lastMonthTotal * 100) : 0;
+
+            const highestCategory = Object.entries(
+                thisMonth.reduce((acc, e) => {
+                    acc[e.category] = (acc[e.category] || 0) + e.amount;
+                    return acc;
+                }, {})
+            ).sort((a, b) => b[1] - a[1])[0];
+
+            const avgDailySpending = thisMonthTotal / now.getDate();
+
+            const container = document.getElementById('keyInsights');
+            container.innerHTML = `
+                    <div class="insight-box">
+                        <h4>This Month's Spending</h4>
+                        <p>₦${thisMonthTotal.toFixed(2)}</p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>vs Last Month</h4>
+                        <p>
+                            <span class="trend-indicator ${change > 0 ? 'trend-up' : change < 0 ? 'trend-down' : 'trend-stable'}">
+                                ${change > 0 ? '↑' : change < 0 ? '↓' : '→'} ${Math.abs(change).toFixed(1)}%
+                            </span>
+                        </p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>Top Category This Month</h4>
+                        <p>${highestCategory ? `${highestCategory[0]} (₦${highestCategory[1].toFixed(2)})` : 'N/A'}</p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>Average Daily Spending</h4>
+                        <p>₦${avgDailySpending.toFixed(2)}</p>
+                    </div>
+                `;
+        }
+
+        function generateSpendingPatterns() {
+            const dayOfWeek = {};
+            const timeOfMonth = { early: 0, mid: 0, late: 0 };
+
+            allExpenses.forEach(expense => {
+                const date = new Date(expense.date);
+                const day = date.toLocaleDateString('default', { weekday: 'long' });
+                dayOfWeek[day] = (dayOfWeek[day] || 0) + expense.amount;
+
+                const dayOfMonth = date.getDate();
+                if (dayOfMonth <= 10) timeOfMonth.early += expense.amount;
+                else if (dayOfMonth <= 20) timeOfMonth.mid += expense.amount;
+                else timeOfMonth.late += expense.amount;
+            });
+
+            const mostExpensiveDay = Object.entries(dayOfWeek).sort((a, b) => b[1] - a[1])[0];
+            const mostExpensivePeriod = Object.entries(timeOfMonth).sort((a, b) => b[1] - a[1])[0];
+
+            const container = document.getElementById('spendingPatterns');
+            container.innerHTML = `
+                    <div class="insight-box">
+                        <h4>Most Expensive Day</h4>
+                        <p>${mostExpensiveDay ? mostExpensiveDay[0] : 'N/A'}</p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>Highest Spending Period</h4>
+                        <p>${mostExpensivePeriod ? (mostExpensivePeriod[0] === 'early' ? 'Early Month (1-10)' : mostExpensivePeriod[0] === 'mid' ? 'Mid Month (11-20)' : 'Late Month (21-31)') : 'N/A'}</p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>Total Transactions</h4>
+                        <p>${allExpenses.length}</p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>Categories Used</h4>
+                        <p>${new Set(allExpenses.map(e => e.category)).size}</p>
+                    </div>
+                `;
+        }
+
+        function generateMonthlyComparison() {
+            const now = new Date();
+            const months = [];
+
+            for (let i = 2; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const monthExpenses = allExpenses.filter(e => {
+                    const expDate = new Date(e.date);
+                    return expDate.getMonth() === date.getMonth() && expDate.getFullYear() === date.getFullYear();
+                });
+
+                const total = monthExpenses.reduce((sum, e) => sum + e.amount, 0);
+                const count = monthExpenses.length;
+                const avg = count > 0 ? total / count : 0;
+
+                months.push({
+                    name: date.toLocaleDateString('default', { month: 'long', year: 'numeric' }),
+                    total,
+                    count,
+                    avg
+                });
+            }
+
+            const container = document.getElementById('monthlyComparison');
+            container.innerHTML = `
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Total Spent</th>
+                                <th>Transactions</th>
+                                <th>Average</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${months.map(m => `
+                                <tr>
+                                    <td>${m.name}</td>
+                                    <td>₦${m.total.toFixed(2)}</td>
+                                    <td>${m.count}</td>
+                                    <td>₦${m.avg.toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+        }
+
+        function generateForecast() {
+            const now = new Date();
+            const last3Months = [];
+
+            for (let i = 2; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const monthExpenses = allExpenses.filter(e => {
+                    const expDate = new Date(e.date);
+                    return expDate.getMonth() === date.getMonth() && expDate.getFullYear() === date.getFullYear();
+                });
+                last3Months.push(monthExpenses.reduce((sum, e) => sum + e.amount, 0));
+            }
+
+            const avgLastMonths = last3Months.reduce((sum, val) => sum + val, 0) / last3Months.length;
+            const trend = last3Months.length >= 2 ? (last3Months[last3Months.length - 1] - last3Months[0]) / 2 : 0;
+            const nextMonthForecast = avgLastMonths + trend;
+
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const daysLeft = daysInMonth - now.getDate();
+            const thisMonthSoFar = allExpenses.filter(e => {
+                const date = new Date(e.date);
+                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+            }).reduce((sum, e) => sum + e.amount, 0);
+
+            const avgDaily = thisMonthSoFar / now.getDate();
+            const projectedThisMonth = thisMonthSoFar + (avgDaily * daysLeft);
+
+            const container = document.getElementById('spendingForecast');
+            container.innerHTML = `
+                    <div class="insight-box">
+                        <h4>Next Month Forecast</h4>
+                        <p>₦${nextMonthForecast.toFixed(2)}</p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>This Month Projection</h4>
+                        <p>₦${projectedThisMonth.toFixed(2)}</p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>3-Month Average</h4>
+                        <p>₦${avgLastMonths.toFixed(2)}</p>
+                    </div>
+                    <div class="insight-box">
+                        <h4>Spending Trend</h4>
+                        <p>
+                            <span class="trend-indicator ${trend > 0 ? 'trend-up' : trend < 0 ? 'trend-down' : 'trend-stable'}">
+                                ${trend > 0 ? '↑ Increasing' : trend < 0 ? '↓ Decreasing' : '→ Stable'}
+                            </span>
+                        </p>
+                    </div>
+                `;
+        }
+
+        // NOW define other functions that use loadAnalytics
 
         document.addEventListener('DOMContentLoaded', () => {
             checkAuth();
+            loadTheme();
         });
+
+        // Theme Management
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeIcon').textContent = '☀️';
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        }
 
         function checkAuth() {
             if (token) {
@@ -1057,7 +1859,7 @@
             const now = new Date();
             document.getElementById('budgetMonth').value = now.getMonth() + 1;
             document.getElementById('budgetYear').value = now.getFullYear();
-            loadExpenses();
+            loadExpenses(); // This will trigger loadAnalytics() when done
             loadCategories();
             loadStats();
             loadBudgets();
@@ -1069,8 +1871,15 @@
                 const response = await apiCall('/expenses');
                 if (!response.ok) throw new Error('Failed to load expenses');
                 allExpenses = await response.json();
+                console.log('Loaded expenses:', allExpenses.length);
                 displayExpenses(allExpenses);
                 updateCharts();
+
+                // Call analytics directly after expenses are loaded
+                if (allExpenses && allExpenses.length > 0) {
+                    console.log('Calling loadAnalytics...');
+                    setTimeout(loadAnalytics, 500);
+                }
             } catch (error) {
                 console.error('Error loading expenses:', error);
                 document.getElementById('expensesList').innerHTML =
@@ -1388,20 +2197,25 @@
             const expenseData = { amount, category, description };
 
             try {
+                let response;
                 if (id) {
-                    await apiCall(`/expenses/${id}`, {
+                    response = await apiCall(`/expenses/${id}`, {
                         method: 'PUT',
                         body: JSON.stringify(expenseData)
                     });
                 } else {
-                    await apiCall('/expenses', {
+                    response = await apiCall('/expenses', {
                         method: 'POST',
                         body: JSON.stringify(expenseData)
                     });
                 }
 
+                if (!response.ok) {
+                    throw new Error('Failed to save expense');
+                }
+
                 closeModal('expenseModal');
-                loadAll();
+                await loadAll();
             } catch (error) {
                 console.error('Error saving expense:', error);
                 alert('Error saving expense!');
@@ -1537,6 +2351,207 @@
                 }
             });
         });
+
+        // Date Filter Functions
+        function filterQuickDate(period) {
+            currentDateFilter = period;
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.btn-date').forEach(btn => btn.classList.remove('active'));
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            const now = new Date();
+            let startDate = null;
+            let endDate = new Date();
+
+            switch (period) {
+                case 'today':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    break;
+                case 'week':
+                    startDate = new Date(now);
+                    startDate.setDate(now.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                    break;
+                case 'lastmonth':
+                    startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                    endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                    break;
+                case 'year':
+                    startDate = new Date(now.getFullYear(), 0, 1);
+                    break;
+                case 'all':
+                    displayExpenses(allExpenses);
+                    updateCharts();
+                    document.getElementById('startDate').value = '';
+                    document.getElementById('endDate').value = '';
+                    return;
+            }
+
+            if (startDate) {
+                document.getElementById('startDate').value = formatDateForInput(startDate);
+                document.getElementById('endDate').value = formatDateForInput(endDate);
+                filterByDateRange(startDate, endDate);
+            }
+        }
+
+        async function filterByCustomDate() {
+            const startDateStr = document.getElementById('startDate').value;
+            const endDateStr = document.getElementById('endDate').value;
+
+            if (!startDateStr && !endDateStr) return;
+
+            currentDateFilter = 'custom';
+            document.querySelectorAll('.btn-date').forEach(btn => btn.classList.remove('active'));
+
+            const startDate = startDateStr ? new Date(startDateStr) : null;
+            const endDate = endDateStr ? new Date(endDateStr) : null;
+
+            filterByDateRange(startDate, endDate);
+        }
+
+        async function filterByDateRange(startDate, endDate) {
+            try {
+                let url = '/expenses/daterange?';
+
+                if (startDate) {
+                    url += `startDate=${startDate.toISOString()}&`;
+                }
+                if (endDate) {
+                    url += `endDate=${endDate.toISOString()}`;
+                }
+
+                const response = await apiCall(url);
+                if (!response.ok) throw new Error('Failed to filter');
+
+                const filteredExpenses = await response.json();
+                displayExpenses(filteredExpenses);
+
+                // Update charts with filtered data
+                updateChartsWithData(filteredExpenses);
+
+                // Update stats with filtered data
+                updateStatsWithData(filteredExpenses);
+            } catch (error) {
+                console.error('Error filtering by date:', error);
+                alert('Error filtering expenses by date!');
+            }
+        }
+
+        function clearDateFilter() {
+            currentDateFilter = 'all';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.querySelectorAll('.btn-date').forEach(btn => btn.classList.remove('active'));
+
+            displayExpenses(allExpenses);
+            updateCharts();
+            loadStats();
+        }
+
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function updateChartsWithData(expenses) {
+            // Update category chart with filtered data
+            const categoryTotals = {};
+            expenses.forEach(expense => {
+                categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + expense.amount;
+            });
+
+            const labels = Object.keys(categoryTotals);
+            const data = Object.values(categoryTotals);
+            const colors = ['#4CAF50', '#2196F3', '#FF9800', '#F44336', '#9C27B0'];
+
+            if (categoryChart) categoryChart.destroy();
+
+            const ctx = document.getElementById('categoryChart');
+            if (labels.length === 0) return;
+
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.label + ': ₦' + context.parsed.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update top expenses chart
+            const sorted = [...expenses].sort((a, b) => b.amount - a.amount).slice(0, 5);
+            const topLabels = sorted.map(e => e.description.substring(0, 20));
+            const topData = sorted.map(e => e.amount);
+
+            if (topExpensesChart) topExpensesChart.destroy();
+
+            const ctx2 = document.getElementById('topExpensesChart');
+            if (sorted.length === 0) return;
+
+            topExpensesChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: topLabels,
+                    datasets: [{
+                        label: 'Amount (₦)',
+                        data: topData,
+                        backgroundColor: '#667eea',
+                        borderColor: '#5568d3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '₦' + value.toFixed(0);
+                                }
+                            }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function updateStatsWithData(expenses) {
+            const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const count = expenses.length;
+            const average = count > 0 ? total / count : 0;
+
+            document.getElementById('totalCount').textContent = count;
+            document.getElementById('totalAmount').textContent = `₦${total.toFixed(2)}`;
+            document.getElementById('avgAmount').textContent = `₦${average.toFixed(2)}`;
+        }
     </script>
 </body>
 </html>

@@ -137,6 +137,31 @@ namespace ExpenseTracker.Api.Controllers
 
             return Ok(new { message = "Expense deleted successfully" });
         }
+
+        
+        [HttpGet("daterange")]
+        public async Task<ActionResult<List<Expense>>> GetExpensesByDateRange(
+            [FromQuery] DateTime? startDate,
+            [FromQuery] DateTime? endDate)
+        {
+            var userId = GetUserId();
+            var allExpenses = await _expenseService.GetAllExpensesAsync();
+            var userExpenses = allExpenses.Where(e => e.UserId == userId);
+
+            if (startDate.HasValue)
+            {
+                userExpenses = userExpenses.Where(e => e.Date >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                // Include the entire end date
+                var endOfDay = endDate.Value.Date.AddDays(1).AddSeconds(-1);
+                userExpenses = userExpenses.Where(e => e.Date <= endOfDay);
+            }
+
+            return Ok(userExpenses.OrderByDescending(e => e.Date).ToList());
+        }
     }
 
     public class CreateExpenseDto
