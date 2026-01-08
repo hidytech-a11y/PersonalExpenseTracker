@@ -1,7 +1,6 @@
-﻿using ExpenseTracker.Api.Models;
-using ExpenseTracker.API.Models;
+﻿using ExpenseTracker.API.Models;
 
-namespace ExpenseTracker.Api.Services
+namespace ExpenseTracker.API.Services
 {
     public interface IBudgetService
     {

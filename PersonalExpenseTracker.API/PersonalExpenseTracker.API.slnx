@@ -3,5 +3,14 @@
     <File Path="index.html" />
     <File Path="manifest.json" />
   </Folder>
+  <Folder Name="/ExpenseTracker.Web/css/">
+    <File Path="style.css" />
+  </Folder>
+  <Folder Name="/ExpenseTracker.Web/js/">
+    <File Path="api.js" />
+    <File Path="app.js" />
+    <File Path="auth.js" />
+    <File Path="charts.js" />
+  </Folder>
   <Project Path="PersonalExpenseTracker.API/ExpenseTracker.API.csproj" />
 </Solution>

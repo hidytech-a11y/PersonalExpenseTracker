@@ -1,147 +1,124 @@
-﻿using ExpenseTracker.Api.Models;
-using ExpenseTracker.Api.Services;
-using ExpenseTracker.API.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using ExpenseTracker.API.Data;
+using ExpenseTracker.API.Models;
+using ExpenseTracker.API.Models.DTOs;
+using ExpenseTracker.API.Services;
 
-namespace ExpenseTracker.Api.Controllers
+namespace ExpenseTracker.API.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     [Authorize]
     public class BudgetsController : ControllerBase
     {
-        private readonly IBudgetService _budgetService;
+        private readonly ExpenseDbContext _context;
+        private readonly IAuthService _authService;
 
-        public BudgetsController(IBudgetService budgetService)
+        public BudgetsController(ExpenseDbContext context, IAuthService authService)
         {
-            _budgetService = budgetService;
+            _context = context;
+            _authService = authService;
         }
 
-        private Guid GetUserId()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return Guid.Parse(userIdClaim!);
-        }
-
+        // GET: api/Budgets
         [HttpGet]
-        public async Task<ActionResult<List<BudgetStatus>>> GetAllBudgets()
+        public async Task<ActionResult<IEnumerable<BudgetDto>>> GetBudgets()
         {
-            var userId = GetUserId();
-            var budgets = await _budgetService.GetAllBudgetsAsync();
-            var userBudgets = budgets.Where(b => b.UserId == userId).ToList();
-            var result = new List<BudgetStatus>();
+            var userId = _authService.GetUserId();
+            var currentMonth = DateTime.Now.Month;
+            var currentYear = DateTime.Now.Year;
 
-            foreach (var budget in userBudgets)
+            var budgets = await _context.Budgets
+                .Where(b => b.UserId == userId && b.Month == currentMonth && b.Year == currentYear)
+                .ToListAsync();
+
+            var budgetDtos = new List<BudgetDto>();
+
+            foreach (var b in budgets)
             {
-                var spent = await _budgetService.GetSpentAmountAsync(
-                    budget.Category, budget.Month, budget.Year, userId);
+                var spent = await _context.Expenses
+                    .Where(e => e.UserId == userId
+                             && e.Category == b.Category
+                             && e.Date.Month == currentMonth
+                             && e.Date.Year == currentYear)
+                    .SumAsync(e => e.Amount);
 
-                result.Add(new BudgetStatus
+                // Use MonthlyLimit here instead of Amount
+                double percentage = 0;
+                if (b.MonthlyLimit > 0)
                 {
-                    Id = budget.Id,
-                    Category = budget.Category,
-                    MonthlyLimit = budget.MonthlyLimit,
+                    percentage = (double)(spent / b.MonthlyLimit) * 100;
+                }
+
+                budgetDtos.Add(new BudgetDto
+                {
+                    Id = b.Id,
+                    Category = b.Category,
+                    MonthlyLimit = b.MonthlyLimit, // Map from Model to DTO
+                    Month = b.Month,
+                    Year = b.Year,
                     Spent = spent,
-                    Remaining = budget.MonthlyLimit - spent,
-                    Percentage = budget.MonthlyLimit > 0
-                        ? (spent / budget.MonthlyLimit) * 100
-                        : 0,
-                    Month = budget.Month,
-                    Year = budget.Year
+                    Percentage = percentage
                 });
             }
 
-            return Ok(result);
+            return Ok(budgetDtos);
         }
 
+        // POST: api/Budgets
         [HttpPost]
-        public async Task<ActionResult> CreateBudget([FromBody] CreateBudgetDto dto)
+        public async Task<ActionResult<Budget>> CreateBudget(Budget budget)
         {
-            var userId = GetUserId();
-            var existing = await _budgetService.GetBudgetAsync(
-                dto.Category, dto.Month, dto.Year, userId);
+            var userId = _authService.GetUserId();
 
-            if (existing != null)
+            budget.UserId = userId;
+
+            // Set defaults if not provided
+            if (budget.Month == 0) budget.Month = DateTime.Now.Month;
+            if (budget.Year == 0) budget.Year = DateTime.Now.Year;
+
+            // Check for duplicates
+            bool exists = await _context.Budgets.AnyAsync(b =>
+                b.UserId == userId &&
+                b.Category == budget.Category &&
+                b.Month == budget.Month &&
+                b.Year == budget.Year);
+
+            if (exists)
             {
-                return BadRequest(new { message = "Budget already exists for this category and month" });
+                return BadRequest("A budget for this category and month already exists.");
             }
 
-            var budget = new Budget
-            {
-                Category = dto.Category,
-                MonthlyLimit = dto.MonthlyLimit,
-                Month = dto.Month,
-                Year = dto.Year,
-                UserId = userId
-            };
+            _context.Budgets.Add(budget);
+            await _context.SaveChangesAsync();
 
-            await _budgetService.AddBudgetAsync(budget);
-            return Ok(budget);
+            return CreatedAtAction(nameof(GetBudgets), new { id = budget.Id }, budget);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateBudget(Guid id, [FromBody] UpdateBudgetDto dto)
-        {
-            var userId = GetUserId();
-            var budget = await _budgetService.GetBudgetByIdAsync(id);
-
-            if (budget == null || budget.UserId != userId)
-            {
-                return NotFound(new { message = "Budget not found" });
-            }
-
-            var success = await _budgetService.UpdateBudgetAsync(id, dto.MonthlyLimit);
-            if (!success)
-            {
-                return NotFound(new { message = "Budget not found" });
-            }
-            return Ok(new { message = "Budget updated" });
-        }
-
+        // DELETE: api/Budgets/{guid}
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteBudget(Guid id)
+        public async Task<IActionResult> DeleteBudget(Guid id) // Changed int to Guid
         {
-            var userId = GetUserId();
-            var budget = await _budgetService.GetBudgetByIdAsync(id);
+            var userId = _authService.GetUserId();
 
-            if (budget == null || budget.UserId != userId)
+            var budget = await _context.Budgets.FindAsync(id);
+
+            if (budget == null)
             {
-                return NotFound(new { message = "Budget not found" });
+                return NotFound();
             }
 
-            var success = await _budgetService.DeleteBudgetAsync(id);
-            if (!success)
+            if (budget.UserId != userId)
             {
-                return NotFound(new { message = "Budget not found" });
+                return Unauthorized();
             }
-            return Ok(new { message = "Budget deleted" });
+
+            _context.Budgets.Remove(budget);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
-    }
-
-    public class BudgetStatus
-    {
-        public Guid Id { get; set; }
-        public string Category { get; set; } = string.Empty;
-        public decimal MonthlyLimit { get; set; }
-        public decimal Spent { get; set; }
-        public decimal Remaining { get; set; }
-        public decimal Percentage { get; set; }
-        public int Month { get; set; }
-        public int Year { get; set; }
-    }
-
-    public class CreateBudgetDto
-    {
-        public string Category { get; set; } = string.Empty;
-        public decimal MonthlyLimit { get; set; }
-        public int Month { get; set; }
-        public int Year { get; set; }
-    }
-
-    public class UpdateBudgetDto
-    {
-        public decimal MonthlyLimit { get; set; }
     }
 }

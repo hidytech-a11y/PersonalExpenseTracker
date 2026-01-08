@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseTracker.API.Migrations
 {
     [DbContext(typeof(ExpenseDbContext))]
-    [Migration("20260107151301_UpdateForAuth")]
-    partial class UpdateForAuth
+    [Migration("20260108133413_UpdateBudgetSchema")]
+    partial class UpdateBudgetSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,42 @@ namespace ExpenseTracker.API.Migrations
                         .IsUnique();
 
                     b.ToTable("Budgets");
+                });
+
+            modelBuilder.Entity("ExpenseTracker.API.Models.Expense", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Category");
+
+                    b.HasIndex("Date");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("ExpenseTracker.API.Models.RecurringExpense", b =>
@@ -127,42 +163,6 @@ namespace ExpenseTracker.API.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("ExpenseTracker.Api.Models.Expense", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Category");
-
-                    b.HasIndex("Date");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Expenses");
                 });
 #pragma warning restore 612, 618
         }

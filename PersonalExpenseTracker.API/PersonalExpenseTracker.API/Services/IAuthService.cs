@@ -1,10 +1,10 @@
-﻿using ExpenseTracker.Api.Models;
-using ExpenseTracker.API.Models;
+﻿using ExpenseTracker.API.Models; // Ensure this is API
 
-namespace ExpenseTracker.Api.Services
+namespace ExpenseTracker.API.Services // <--- CHANGE THIS from .Api to .API
 {
     public interface IAuthService
     {
+        Guid GetUserId();
         Task<AuthResult> RegisterAsync(string name, string email, string password);
         Task<AuthResult> LoginAsync(string email, string password);
         Task<User?> GetUserByIdAsync(Guid userId);

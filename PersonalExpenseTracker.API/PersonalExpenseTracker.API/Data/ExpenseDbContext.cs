@@ -1,8 +1,7 @@
-﻿using ExpenseTracker.Api.Models;
-using ExpenseTracker.API.Models;
+﻿using ExpenseTracker.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExpenseTracker.Api.Data
+namespace ExpenseTracker.API.Data
 {
     public class ExpenseDbContext : DbContext
     {

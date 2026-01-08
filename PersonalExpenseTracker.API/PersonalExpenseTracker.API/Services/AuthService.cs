@@ -1,5 +1,4 @@
-﻿using ExpenseTracker.Api.Data;
-using ExpenseTracker.Api.Models;
+﻿using ExpenseTracker.API.Data;
 using ExpenseTracker.API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,22 +6,49 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace ExpenseTracker.Api.Services
+namespace ExpenseTracker.API.Services
 {
     public class AuthService : IAuthService
     {
+        // 1. Fields declared ONCE
         private readonly ExpenseDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(ExpenseDbContext context, IConfiguration configuration)
+        // 2. Single Constructor injecting all dependencies
+        public AuthService(ExpenseDbContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
+        // 3. New Method: Get User ID from Token
+        public Guid GetUserId()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext == null)
+            {
+                throw new InvalidOperationException("No HTTP context available.");
+            }
+
+            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("User ID claim not found in token.");
+            }
+
+            if (Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                return userId;
+            }
+
+            throw new Exception("User ID in token is not a valid GUID.");
+        }
+
+        // 4. Register Method
         public async Task<AuthResult> RegisterAsync(string name, string email, string password)
         {
-            // Check if user exists
             if (await _context.Users.AnyAsync(u => u.Email == email))
             {
                 return new AuthResult
@@ -32,10 +58,8 @@ namespace ExpenseTracker.Api.Services
                 };
             }
 
-            // Hash password
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
-            // Create user
             var user = new User
             {
                 Name = name,
@@ -46,7 +70,6 @@ namespace ExpenseTracker.Api.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Generate token
             var token = GenerateJwtToken(user);
 
             return new AuthResult
@@ -58,6 +81,7 @@ namespace ExpenseTracker.Api.Services
             };
         }
 
+        // 5. Login Method
         public async Task<AuthResult> LoginAsync(string email, string password)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -71,7 +95,6 @@ namespace ExpenseTracker.Api.Services
                 };
             }
 
-            // Verify password
             if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
                 return new AuthResult
@@ -81,7 +104,6 @@ namespace ExpenseTracker.Api.Services
                 };
             }
 
-            // Generate token
             var token = GenerateJwtToken(user);
 
             return new AuthResult
@@ -93,11 +115,13 @@ namespace ExpenseTracker.Api.Services
             };
         }
 
+        // 6. Get User By ID Method
         public async Task<User?> GetUserByIdAsync(Guid userId)
         {
             return await _context.Users.FindAsync(userId);
         }
 
+        // 7. Token Generation Helper
         private string GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(

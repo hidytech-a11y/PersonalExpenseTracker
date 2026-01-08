@@ -1,9 +1,9 @@
-﻿using ExpenseTracker.Api.Data;
-using ExpenseTracker.Api.Models;
+﻿using ExpenseTracker.API.Data;
 using ExpenseTracker.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExpenseTracker.Api.Services
+namespace ExpenseTracker.API.Services
+
 {
     public class BudgetRepository : IBudgetService
     {
