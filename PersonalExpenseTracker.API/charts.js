@@ -1,37 +1,34 @@
 let categoryChartInstance = null;
 let trendChartInstance = null;
 
-function renderCategoryChart(expenses) {
+function renderCategoryChart(dataPoints) {
     const ctx = document.getElementById('categoryChart').getContext('2d');
-
-    // Group expenses by category
-    const categories = {};
-    expenses.forEach(e => {
-        categories[e.category] = (categories[e.category] || 0) + e.amount;
-    });
+    const labels = dataPoints.map(d => d.label);
+    const data = dataPoints.map(d => d.value);
 
     if (categoryChartInstance) categoryChartInstance.destroy();
 
     categoryChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: Object.keys(categories),
+            labels: labels,
             datasets: [{
-                data: Object.values(categories),
+                data: data,
                 backgroundColor: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
             }]
         },
-        options: { responsive: true, plugins: { title: { display: true, text: 'Spending by Category' } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { title: { display: true, text: 'Spending by Category (This Month)' } }
+        }
     });
 }
 
-function renderTrendChart(expenses) {
+function renderTrendChart(dataPoints) {
     const ctx = document.getElementById('trendChart').getContext('2d');
-
-    // Sort expenses by date
-    const sorted = expenses.sort((a, b) => new Date(a.date) - new Date(b.date));
-    const labels = sorted.map(e => new Date(e.date).toLocaleDateString());
-    const data = sorted.map(e => e.amount);
+    const labels = dataPoints.map(d => d.label);
+    const data = dataPoints.map(d => d.value);
 
     if (trendChartInstance) trendChartInstance.destroy();
 
@@ -43,9 +40,14 @@ function renderTrendChart(expenses) {
                 label: 'Daily Spending',
                 data: data,
                 borderColor: '#4F46E5',
-                tension: 0.4
+                fill: true,
+                tension: 0.3
             }]
         },
-        options: { responsive: true, plugins: { title: { display: true, text: 'Spending Trend' } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { title: { display: true, text: '30-Day Trend' } }
+        }
     });
 }

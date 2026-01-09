@@ -21,17 +21,60 @@ namespace ExpenseTracker.Api.Controllers
         private Guid GetUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return Guid.Parse(userIdClaim!);
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                throw new UnauthorizedAccessException("User ID not found in token.");
+            }
+            return Guid.Parse(userIdClaim);
         }
 
+        // GET: api/Expenses (Renamed to GetAllExpenses as requested)
         [HttpGet]
-        public async Task<ActionResult<List<Expense>>> GetAllExpenses()
+        public async Task<ActionResult<List<Expense>>> GetAllExpenses(
+            [FromQuery] string? search,
+            [FromQuery] string? category,
+            [FromQuery] DateTime? startDate,
+            [FromQuery] DateTime? endDate)
         {
             var userId = GetUserId();
-            var expenses = await _expenseService.GetAllExpensesAsync();
-            return Ok(expenses.Where(e => e.UserId == userId).ToList());
+
+            // 1. Fetch ALL expenses from the service
+            var allExpenses = await _expenseService.GetAllExpensesAsync();
+
+            // 2. Start Filtering (In Memory)
+            // We filter by UserID first
+            var query = allExpenses.Where(e => e.UserId == userId);
+
+            // 3. Apply Search Filter (Description)
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(e => e.Description.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // 4. Apply Category Filter
+            if (!string.IsNullOrWhiteSpace(category) && category != "All")
+            {
+                query = query.Where(e => e.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // 5. Apply Date Range Filter
+            if (startDate.HasValue)
+            {
+                query = query.Where(e => e.Date >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                // Ensure we include the full end day (up to 23:59:59)
+                var endOfDay = endDate.Value.Date.AddDays(1).AddTicks(-1);
+                query = query.Where(e => e.Date <= endOfDay);
+            }
+
+            // 6. Return sorted results
+            return Ok(query.OrderByDescending(e => e.Date).ToList());
         }
 
+        // GET: api/Expenses/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Expense>> GetExpenseById(Guid id)
         {
@@ -46,22 +89,15 @@ namespace ExpenseTracker.Api.Controllers
             return Ok(expense);
         }
 
-        [HttpGet("category/{category}")]
-        public async Task<ActionResult<List<Expense>>> GetExpensesByCategory(string category)
-        {
-            var userId = GetUserId();
-            var expenses = await _expenseService.GetExpensesByCategoryAsync(category);
-            return Ok(expenses.Where(e => e.UserId == userId).ToList());
-        }
-
+        // GET: api/Expenses/categories
         [HttpGet("categories")]
         public async Task<ActionResult<List<string>>> GetAllCategories()
         {
-            var userId = GetUserId();
             var categories = await _expenseService.GetAllCategoriesAsync();
             return Ok(categories);
         }
 
+        // GET: api/Expenses/total
         [HttpGet("total")]
         public async Task<ActionResult<object>> GetTotalSpending()
         {
@@ -80,6 +116,7 @@ namespace ExpenseTracker.Api.Controllers
             });
         }
 
+        // POST: api/Expenses
         [HttpPost]
         public async Task<ActionResult<Expense>> CreateExpense([FromBody] CreateExpenseDto dto)
         {
@@ -90,6 +127,7 @@ namespace ExpenseTracker.Api.Controllers
                 Amount = dto.Amount,
                 Category = dto.Category,
                 Description = dto.Description,
+                Date = dto.Date, // Ensure Date is captured from DTO
                 UserId = userId
             };
 
@@ -97,6 +135,7 @@ namespace ExpenseTracker.Api.Controllers
             return CreatedAtAction(nameof(GetExpenseById), new { id = expense.Id }, expense);
         }
 
+        // PUT: api/Expenses/{id}
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateExpense(Guid id, [FromBody] UpdateExpenseDto dto)
         {
@@ -109,15 +148,17 @@ namespace ExpenseTracker.Api.Controllers
             }
 
             var success = await _expenseService.UpdateExpenseAsync(id, dto.Amount, dto.Category, dto.Description);
+
             if (!success)
             {
-                return NotFound(new { message = "Expense not found" });
+                return NotFound(new { message = "Update failed" });
             }
 
             var updatedExpense = await _expenseService.GetExpenseByIdAsync(id);
             return Ok(updatedExpense);
         }
 
+        // DELETE: api/Expenses/{id}
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteExpense(Guid id)
         {
@@ -132,43 +173,20 @@ namespace ExpenseTracker.Api.Controllers
             var success = await _expenseService.DeleteExpenseAsync(id);
             if (!success)
             {
-                return NotFound(new { message = "Expense not found" });
+                return NotFound(new { message = "Delete failed" });
             }
 
             return Ok(new { message = "Expense deleted successfully" });
         }
-
-        
-        [HttpGet("daterange")]
-        public async Task<ActionResult<List<Expense>>> GetExpensesByDateRange(
-            [FromQuery] DateTime? startDate,
-            [FromQuery] DateTime? endDate)
-        {
-            var userId = GetUserId();
-            var allExpenses = await _expenseService.GetAllExpensesAsync();
-            var userExpenses = allExpenses.Where(e => e.UserId == userId);
-
-            if (startDate.HasValue)
-            {
-                userExpenses = userExpenses.Where(e => e.Date >= startDate.Value);
-            }
-
-            if (endDate.HasValue)
-            {
-                // Include the entire end date
-                var endOfDay = endDate.Value.Date.AddDays(1).AddSeconds(-1);
-                userExpenses = userExpenses.Where(e => e.Date <= endOfDay);
-            }
-
-            return Ok(userExpenses.OrderByDescending(e => e.Date).ToList());
-        }
     }
 
+    // DTOs
     public class CreateExpenseDto
     {
         public decimal Amount { get; set; }
         public string Category { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public DateTime Date { get; set; } = DateTime.UtcNow; // Added Date support
     }
 
     public class UpdateExpenseDto

@@ -1,4 +1,12 @@
-﻿// --- INIT ---
+﻿// HELPER: Strict Formatting for Nigerian Naira (NGN)
+function formatMoney(amount) {
+    return new Intl.NumberFormat('en-NG', {
+        style: 'currency',
+        currency: 'NGN'
+    }).format(amount);
+}
+
+// --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -18,46 +26,63 @@ function navigate(viewName) {
     document.getElementById(`view-${viewName}`).classList.remove('hidden');
     document.querySelector(`button[onclick="navigate('${viewName}')"]`).classList.add('active');
 
-    const titles = {
-        dashboard: 'Dashboard',
-        expenses: 'My Expenses',
-        budgets: 'Budget Goals',
-        recurring: 'Recurring Bills' // New Title
-    };
+    const titles = { dashboard: 'Dashboard', expenses: 'My Expenses', budgets: 'Budget Goals', recurring: 'Recurring Bills' };
     document.getElementById('page-title').innerText = titles[viewName];
 
     if (viewName === 'dashboard') loadDashboard();
-    if (viewName === 'expenses') loadExpenses();
+    if (viewName === 'expenses') loadExpenses(); // Will now load with default filters
     if (viewName === 'budgets') loadBudgets();
-    if (viewName === 'recurring') loadRecurring(); // New Load Function
+    if (viewName === 'recurring') loadRecurring();
 }
 
 // --- DASHBOARD ---
 async function loadDashboard() {
-    const expenses = await apiCall('/expenses');
-    if (!expenses) return;
-    const total = expenses.reduce((sum, item) => sum + item.amount, 0);
-    document.getElementById('total-spent').innerText = `$${total.toFixed(2)}`;
-    document.getElementById('tx-count').innerText = expenses.length;
-    renderCategoryChart(expenses);
-    renderTrendChart(expenses);
+    const stats = await apiCall('/analytics/dashboard');
+    if (!stats) return;
+
+    // Apply NGN Formatting
+    document.getElementById('total-spent').innerText = formatMoney(stats.totalSpent);
+    document.getElementById('tx-count').innerText = stats.transactionCount;
+
+    if (window.renderCategoryChart && stats.categoryBreakdown) renderCategoryChart(stats.categoryBreakdown);
+    if (window.renderTrendChart && stats.monthlyTrend) renderTrendChart(stats.monthlyTrend);
 }
 
-// --- EXPENSES ---
+// --- EXPENSES (With Search & Filter Logic) ---
 async function loadExpenses() {
-    const expenses = await apiCall('/expenses');
+    // 1. Get values from the Filter inputs
+    const search = document.getElementById('filter-search')?.value || '';
+    const category = document.getElementById('filter-category')?.value || 'All';
+    const start = document.getElementById('filter-start')?.value || '';
+    const end = document.getElementById('filter-end')?.value || '';
+
+    // 2. Build Query String
+    let query = '/expenses?';
+    if (search) query += `search=${encodeURIComponent(search)}&`;
+    if (category && category !== 'All') query += `category=${encodeURIComponent(category)}&`;
+    if (start) query += `startDate=${start}&`;
+    if (end) query += `endDate=${end}&`;
+
+    const expenses = await apiCall(query);
     const tbody = document.getElementById('expense-table-body');
     tbody.innerHTML = '';
-    expenses.forEach(exp => {
-        const row = `<tr>
-            <td>${new Date(exp.date).toLocaleDateString()}</td>
-            <td>${exp.category}</td>
-            <td>${exp.description}</td>
-            <td>$${exp.amount.toFixed(2)}</td>
-            <td><button onclick="deleteExpense('${exp.id}')" style="color:red;border:none;background:none;cursor:pointer;">🗑️</button></td>
-        </tr>`;
-        tbody.innerHTML += row;
-    });
+
+    if (expenses) {
+        expenses.forEach(exp => {
+            const row = `<tr>
+                <td>${new Date(exp.date).toLocaleDateString()}</td>
+                <td>${exp.category}</td>
+                <td>${exp.description}</td>
+                <td style="font-weight:bold; color: #10B981">${formatMoney(exp.amount)}</td>
+                <td>
+                    <button onclick="deleteExpense('${exp.id}')" style="color:#EF4444;border:none;background:none;cursor:pointer;">
+                        <i class="fas fa-trash"></i> 🗑️
+                    </button>
+                </td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
 }
 
 async function saveExpense() {
@@ -65,8 +90,11 @@ async function saveExpense() {
     const category = document.getElementById('exp-category').value;
     const description = document.getElementById('exp-desc').value;
     const amount = parseFloat(document.getElementById('exp-amount').value);
-    const result = await apiCall('/expenses', 'POST', { date, category, description, amount });
-    if (result) { closeModal('expense-modal'); loadExpenses(); }
+
+    if (await apiCall('/expenses', 'POST', { date, category, description, amount })) {
+        closeModal('expense-modal');
+        loadExpenses();
+    }
 }
 
 async function deleteExpense(id) {
@@ -81,67 +109,72 @@ async function loadBudgets() {
     const budgets = await apiCall('/budgets');
     const container = document.getElementById('budget-container');
     container.innerHTML = '';
-    budgets.forEach(b => {
-        let color = '#10B981';
-        if (b.percentage > 80) color = '#F59E0B';
-        if (b.percentage >= 100) color = '#EF4444';
-        const card = `
-        <div class="card budget-card">
-            <div style="display:flex;justify-content:space-between;">
-                <h3>${b.category}</h3>
-                <button onclick="deleteBudget('${b.id}')" style="color:#9CA3AF;border:none;background:none;cursor:pointer;">✕</button>
-            </div>
-            <p style="margin:10px 0; font-size:1.1rem;"><strong>$${b.spent.toFixed(2)}</strong> / $${b.monthlyLimit.toFixed(2)}</p>
-            <div class="progress-bar"><div class="progress-fill" style="width: ${Math.min(b.percentage, 100)}%; background: ${color}"></div></div>
-            <p style="margin-top:5px; font-size:0.9rem; color:${color}">${b.percentage.toFixed(1)}% Used</p>
-        </div>`;
-        container.innerHTML += card;
-    });
+
+    if (budgets) {
+        budgets.forEach(b => {
+            let color = '#10B981'; // Green
+            if (b.percentage > 80) color = '#F59E0B'; // Orange
+            if (b.percentage >= 100) color = '#EF4444'; // Red
+
+            container.innerHTML += `
+            <div class="card budget-card">
+                <div style="display:flex;justify-content:space-between;">
+                    <h3>${b.category}</h3>
+                    <button onclick="deleteBudget('${b.id}')" style="border:none;background:none;cursor:pointer;">✕</button>
+                </div>
+                <p><strong>${formatMoney(b.spent)}</strong> / ${formatMoney(b.monthlyLimit)}</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:${Math.min(b.percentage, 100)}%;background:${color}"></div>
+                </div>
+                <p style="color:${color}">${b.percentage.toFixed(1)}% Used</p>
+            </div>`;
+        });
+    }
 }
 
 async function saveBudget() {
     const category = document.getElementById('bud-category').value;
     const limit = parseFloat(document.getElementById('bud-limit').value);
-    const result = await apiCall('/budgets', 'POST', { category, monthlyLimit: limit });
-    if (result) { closeModal('budget-modal'); loadBudgets(); }
+
+    if (await apiCall('/budgets', 'POST', { category, monthlyLimit: limit })) {
+        closeModal('budget-modal');
+        loadBudgets();
+    }
 }
 
 async function deleteBudget(id) {
-    if (confirm("Delete this budget?")) {
+    if (confirm("Delete budget?")) {
         await apiCall(`/budgets/${id}`, 'DELETE');
         loadBudgets();
     }
 }
 
-// --- NEW: RECURRING EXPENSES LOGIC ---
+// --- RECURRING ---
 async function loadRecurring() {
-    const items = await apiCall('/recurringexpenses'); // Ensure endpoint matches backend
+    const items = await apiCall('/recurringexpenses');
     const tbody = document.getElementById('recurring-table-body');
     tbody.innerHTML = '';
-
     const today = new Date();
-    const currentDay = today.getDate();
 
-    items.forEach(item => {
-        // Calculate "Next Bill Date"
-        let nextDate = new Date(today.getFullYear(), today.getMonth(), item.dayOfMonth);
-        if (item.dayOfMonth < currentDay) {
-            // If bill day passed this month, show next month
-            nextDate.setMonth(nextDate.getMonth() + 1);
-        }
+    if (items) {
+        items.forEach(item => {
+            let nextDate = new Date(today.getFullYear(), today.getMonth(), item.dayOfMonth);
+            if (today.getDate() > item.dayOfMonth) nextDate.setMonth(nextDate.getMonth() + 1);
 
-        const row = `<tr>
-            <td>${item.description}</td>
-            <td>${item.category}</td>
-            <td>$${item.amount.toFixed(2)}</td>
-            <td>Monthly (Day ${item.dayOfMonth})</td>
-            <td>${nextDate.toLocaleDateString()}</td>
-            <td>
-                <button onclick="deleteRecurring('${item.id}')" style="color:red;border:none;background:none;cursor:pointer;">🗑️</button>
-            </td>
-        </tr>`;
-        tbody.innerHTML += row;
-    });
+            tbody.innerHTML += `<tr>
+                <td>${item.description}</td>
+                <td>${item.category}</td>
+                <td>${formatMoney(item.amount)}</td>
+                <td>Monthly (Day ${item.dayOfMonth})</td>
+                <td>${nextDate.toLocaleDateString()}</td>
+                <td>
+                    <button onclick="deleteRecurring('${item.id}')" style="color:red;border:none;background:none;cursor:pointer;">
+                        <i class="fas fa-trash"></i> 🗑️
+                    </button>
+                </td>
+            </tr>`;
+        });
+    }
 }
 
 async function saveRecurring() {
@@ -150,34 +183,20 @@ async function saveRecurring() {
     const amount = parseFloat(document.getElementById('rec-amount').value);
     const dayOfMonth = parseInt(document.getElementById('rec-day').value);
 
-    // Basic Validation
-    if (!description || !category || isNaN(amount) || isNaN(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 31) {
-        alert("Please fill all fields correctly. Day must be 1-31.");
-        return;
-    }
-
-    const payload = {
-        category,
-        description,
-        amount,
-        dayOfMonth,
-        frequency: "Monthly" // Defaulting to Monthly for MVP
-    };
-
-    const result = await apiCall('/recurringexpenses', 'POST', payload);
-    if (result) {
+    const payload = { category, description, amount, dayOfMonth, frequency: "Monthly" };
+    if (await apiCall('/recurringexpenses', 'POST', payload)) {
         closeModal('recurring-modal');
         loadRecurring();
     }
 }
 
 async function deleteRecurring(id) {
-    if (confirm("Stop this recurring expense?")) {
+    if (confirm("Stop recurring?")) {
         await apiCall(`/recurringexpenses/${id}`, 'DELETE');
         loadRecurring();
     }
 }
 
-// --- MODAL UTILS ---
+// --- MODALS ---
 function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
 function closeModal(id) { document.getElementById(id).classList.add('hidden'); }

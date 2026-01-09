@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker</title>
+    <title>FinTrack - Expense Tracker</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <div id="auth-container" class="auth-overlay">
         <div class="auth-box">
             <h2 class="brand-text">FinTrack</h2>
-
             <div id="login-form">
                 <h3>Login</h3>
                 <input type="email" id="login-email" placeholder="Email Address">
@@ -20,7 +20,6 @@
                 <button onclick="handleLogin()" class="btn-primary full-width">Login</button>
                 <p class="switch-auth">No account? <a href="#" onclick="toggleAuthMode()">Register</a></p>
             </div>
-
             <div id="register-form" class="hidden">
                 <h3>Create Account</h3>
                 <input type="text" id="reg-name" placeholder="Full Name">
@@ -33,93 +32,80 @@
     </div>
 
     <div id="app-container" class="app-layout hidden">
-
         <aside class="sidebar">
-            <div class="brand">FinTrack 💰</div>
+            <div class="brand">FinTrack ₦</div>
             <nav>
-                <button class="nav-btn active" onclick="navigate('dashboard')">📊 Dashboard</button>
-                <button class="nav-btn" onclick="navigate('expenses')">💸 Expenses</button>
-                <button class="nav-btn" onclick="navigate('budgets')">🎯 Budgets</button>
-                <button class="nav-btn" onclick="navigate('recurring')">🔄 Recurring</button>
-                <button class="nav-btn logout" onclick="logout()">🚪 Logout</button>
+                <button class="nav-btn active" onclick="navigate('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</button>
+                <button class="nav-btn" onclick="navigate('expenses')"><i class="fas fa-wallet"></i> Expenses</button>
+                <button class="nav-btn" onclick="navigate('budgets')"><i class="fas fa-bullseye"></i> Budgets</button>
+                <button class="nav-btn" onclick="navigate('recurring')"><i class="fas fa-sync"></i> Recurring</button>
+                <button class="nav-btn logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </nav>
         </aside>
 
         <main class="content">
             <header>
                 <h1 id="page-title">Dashboard</h1>
-                <div class="user-profile">
-                    <span id="display-username">User</span>
-                </div>
+                <div class="user-profile"><i class="fas fa-user-circle"></i> <span id="display-username">User</span></div>
             </header>
 
             <section id="view-dashboard" class="view-section">
                 <div class="stats-grid">
                     <div class="card stat-card">
                         <h3>Total Spent (Month)</h3>
-                        <p id="total-spent" class="highlight-text">$0.00</p>
+                        <p id="total-spent" class="highlight-text">₦0.00</p>
                     </div>
                     <div class="card stat-card">
                         <h3>Transactions</h3>
                         <p id="tx-count" class="highlight-text">0</p>
                     </div>
                 </div>
-
                 <div class="charts-row">
-                    <div class="card chart-card">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
-                    <div class="card chart-card">
-                        <canvas id="trendChart"></canvas>
-                    </div>
+                    <div class="card chart-card"><canvas id="categoryChart"></canvas></div>
+                    <div class="card chart-card"><canvas id="trendChart"></canvas></div>
                 </div>
             </section>
 
             <section id="view-expenses" class="view-section hidden">
-                <div class="action-bar">
-                    <button class="btn-primary" onclick="openModal('expense-modal')">+ Add New Expense</button>
+
+                <div class="filter-bar card">
+                    <div class="filter-group">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="filter-search" placeholder="Search..." onkeyup="loadExpenses()">
+                    </div>
+                    <select id="filter-category" onchange="loadExpenses()">
+                        <option value="All">All Categories</option>
+                        <option value="Food">Food</option>
+                        <option value="Rent">Rent</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Transportation">Transportation</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="date" id="filter-start" onchange="loadExpenses()">
+                    <input type="date" id="filter-end" onchange="loadExpenses()">
+                    <button class="btn-primary" onclick="openModal('expense-modal')"><i class="fas fa-plus"></i> Add</button>
                 </div>
+
                 <div class="table-container">
                     <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Category</th>
-                                <th>Description</th>
-                                <th>Amount</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Actions</th></tr></thead>
                         <tbody id="expense-table-body"></tbody>
                     </table>
                 </div>
             </section>
 
             <section id="view-budgets" class="view-section hidden">
-                <div class="action-bar">
-                    <button class="btn-primary" onclick="openModal('budget-modal')">+ Set New Budget</button>
-                </div>
+                <div class="action-bar"><button class="btn-primary" onclick="openModal('budget-modal')">+ Set New Budget</button></div>
                 <div id="budget-container" class="budget-grid"></div>
             </section>
 
             <section id="view-recurring" class="view-section hidden">
-                <div class="action-bar">
-                    <button class="btn-primary" onclick="openModal('recurring-modal')">+ Add Recurring Rule</button>
-                </div>
+                <div class="action-bar"><button class="btn-primary" onclick="openModal('recurring-modal')">+ Add Recurring Rule</button></div>
                 <div class="table-container">
                     <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Category</th>
-                                <th>Amount</th>
-                                <th>Frequency</th>
-                                <th>Next Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recurring-table-body">
-                        </tbody>
+                        <thead><tr><th>Description</th><th>Category</th><th>Amount</th><th>Frequency</th><th>Next Due</th><th>Actions</th></tr></thead>
+                        <tbody id="recurring-table-body"></tbody>
                     </table>
                 </div>
             </section>
@@ -130,9 +116,9 @@
         <div class="modal-content">
             <h3>Add Expense</h3>
             <input type="date" id="exp-date">
-            <input type="text" id="exp-category" placeholder="Category (e.g., Food)">
+            <input type="text" id="exp-category" placeholder="Category">
             <input type="text" id="exp-desc" placeholder="Description">
-            <input type="number" id="exp-amount" placeholder="Amount (0.00)">
+            <input type="number" id="exp-amount" placeholder="Amount (₦)">
             <div class="modal-actions">
                 <button onclick="saveExpense()" class="btn-primary">Save</button>
                 <button onclick="closeModal('expense-modal')" class="btn-secondary">Cancel</button>
@@ -143,27 +129,20 @@
     <div id="budget-modal" class="modal hidden">
         <div class="modal-content">
             <h3>Set Budget</h3>
-            <input type="text" id="bud-category" placeholder="Category (e.g., Food)">
-            <input type="number" id="bud-limit" placeholder="Monthly Limit">
-            <div class="modal-actions">
-                <button onclick="saveBudget()" class="btn-primary">Save</button>
-                <button onclick="closeModal('budget-modal')" class="btn-secondary">Cancel</button>
-            </div>
+            <input type="text" id="bud-category" placeholder="Category">
+            <input type="number" id="bud-limit" placeholder="Monthly Limit (₦)">
+            <div class="modal-actions"><button onclick="saveBudget()" class="btn-primary">Save</button><button onclick="closeModal('budget-modal')" class="btn-secondary">Cancel</button></div>
         </div>
     </div>
 
     <div id="recurring-modal" class="modal hidden">
         <div class="modal-content">
             <h3>Recurring Expense</h3>
-            <input type="text" id="rec-desc" placeholder="Description (e.g., Netflix)">
-            <input type="text" id="rec-category" placeholder="Category (e.g., Entertainment)">
-            <input type="number" id="rec-amount" placeholder="Amount (0.00)">
-            <label>Bill Day (1-31):</label>
-            <input type="number" id="rec-day" min="1" max="31" placeholder="Day of Month">
-            <div class="modal-actions">
-                <button onclick="saveRecurring()" class="btn-primary">Save Rule</button>
-                <button onclick="closeModal('recurring-modal')" class="btn-secondary">Cancel</button>
-            </div>
+            <input type="text" id="rec-desc" placeholder="Description">
+            <input type="text" id="rec-category" placeholder="Category">
+            <input type="number" id="rec-amount" placeholder="Amount (₦)">
+            <input type="number" id="rec-day" min="1" max="31" placeholder="Day (1-31)">
+            <div class="modal-actions"><button onclick="saveRecurring()" class="btn-primary">Save</button><button onclick="closeModal('recurring-modal')" class="btn-secondary">Cancel</button></div>
         </div>
     </div>
 

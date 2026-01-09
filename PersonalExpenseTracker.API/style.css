@@ -303,6 +303,71 @@ h1 {
     }
 
 
+/* FILTER BAR STYLING */
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Key for responsiveness */
+    align-items: center;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.filter-group {
+    position: relative;
+    flex: 2; /* Search bar takes more space */
+    min-width: 200px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+}
+
+.filter-bar input, .filter-bar select {
+    padding: 10px 10px 10px 35px; /* Space for icon */
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+    .filter-bar select, .filter-bar input[type="date"] {
+        padding-left: 10px; /* Normal padding for non-search inputs */
+        flex: 1;
+        min-width: 140px;
+    }
+
+.filter-bar button {
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+/* MOBILE RESPONSIVENESS (Advanced) */
+@media (max-width: 768px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .filter-group, .filter-bar select, .filter-bar input, .filter-bar button {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+    /* Hide less critical columns on very small screens */
+    .data-table th:nth-child(3), .data-table td:nth-child(3) {
+        display: none; /* Hides Description column on mobile */
+    }
+}
+
+
 
 /* =========================================
    MOBILE RESPONSIVENESS (Media Queries)
