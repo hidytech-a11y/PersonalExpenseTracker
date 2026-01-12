@@ -5,13 +5,20 @@
         public decimal TotalSpent { get; set; }
         public int TransactionCount { get; set; }
 
-        // Data for the Doughnut Chart
-        public List<ChartDataPoint> CategoryBreakdown { get; set; } = new();
+        // Comparison / Insight Fields
+        public decimal TotalSpentLastMonth { get; set; }
+        public double PercentageChange { get; set; }
+        public string TopCategory { get; set; } = "None";
 
-        // Data for the Line Chart (Last 30 Days)
+        // Lists for Charts
+        public List<ChartDataPoint> CategoryBreakdown { get; set; } = new();
         public List<ChartDataPoint> MonthlyTrend { get; set; } = new();
+
+        //New: 6-month Comparison Data
+        public List<ChartDataPoint> SixMonthStats { get; set; } = new(); 
     }
 
+    // This is the missing class causing the error
     public class ChartDataPoint
     {
         public string Label { get; set; } = string.Empty;

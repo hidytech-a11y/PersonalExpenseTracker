@@ -3,6 +3,7 @@ using ExpenseTracker.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text;
 
 namespace ExpenseTracker.Api.Controllers
 {
@@ -177,6 +178,42 @@ namespace ExpenseTracker.Api.Controllers
             }
 
             return Ok(new { message = "Expense deleted successfully" });
+        }
+
+
+        // GET: api/Expenses/export
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportExpenses()
+        {
+            var userId = GetUserId();
+            var allExpenses = await _expenseService.GetAllExpensesAsync();
+
+            // Get user's data sorted by date
+            var userExpenses = allExpenses
+                .Where(e => e.UserId == userId)
+                .OrderByDescending(e => e.Date)
+                .ToList();
+
+            // Build the CSV string
+            var builder = new StringBuilder();
+
+            // 1. Add Header Row
+            builder.AppendLine("Date,Category,Description,Amount (NGN)");
+
+            // 2. Add Data Rows
+            foreach (var e in userExpenses)
+            {
+                // Sanitize description: If it contains a comma, wrap it in quotes to avoid breaking the CSV format
+                var safeDescription = e.Description.Contains(",") ? $"\"{e.Description}\"" : e.Description;
+
+                builder.AppendLine($"{e.Date:yyyy-MM-dd},{e.Category},{safeDescription},{e.Amount}");
+            }
+
+            // 3. Return as File
+            var bytes = Encoding.UTF8.GetBytes(builder.ToString());
+            var fileName = $"Expenses_{DateTime.Now:yyyyMMdd}.csv";
+
+            return File(bytes, "text/csv", fileName);
         }
     }
 

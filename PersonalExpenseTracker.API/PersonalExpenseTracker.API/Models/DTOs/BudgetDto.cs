@@ -9,5 +9,10 @@
         public double Percentage { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
+
+
+        public decimal RolloverAmount { get; set; } // New property for rollover amount
+        public decimal EffectiveLimit { get; set; } // New property for effective limit
+        public bool EnableRollover { get; set; } // New property to indicate if rollover is enabled
     }
 }

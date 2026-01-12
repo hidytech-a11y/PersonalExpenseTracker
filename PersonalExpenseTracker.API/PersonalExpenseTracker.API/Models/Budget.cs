@@ -33,5 +33,9 @@ namespace ExpenseTracker.API.Models
             Year = DateTime.UtcNow.Year;
 
         }
+
+
+        // New property to track amount spent
+        public bool EnableRollover { get; set; } = false;
     }
 }
